@@ -4,22 +4,23 @@ defmodule Utils do
     get_input(System.argv) |> Stream.map(&String.trim/1)
   end
 
-  defp get_input(argv) do
-    case argv do
-      [head | _] ->
-        # commandline argument is a filename, stream its contents
-        File.stream!(head, [:utf8], :line)
-      [] ->
-        # no commandline arguments, stream standard input
-        IO.stream()
-    end
+  defp get_input([head | _]) do
+    # commandline argument is a filename, stream its contents
+    File.stream!(head, [:utf8], :line)
   end
 
+  defp get_input([]) do
+    # no commandline arguments, stream standard input
+    IO.stream()
+  end
+
+
   def get_input_blocks() do
+    # group input data as blocks separated by empty lines
     get_input() |> chunk_blocks()
   end
 
-  def chunk_blocks(input_stream) do
+  defp chunk_blocks(input_stream) do
     chunk_fun = fn
       "", [] ->
         # skip multiple empty lines entirely
@@ -41,7 +42,13 @@ defmodule Utils do
         {:cont, Enum.reverse(acc), []}
     end
 
-    # group input data as blocks separated by empty lines
+    # group input stream into chunks
     input_stream |> Stream.chunk_while([], chunk_fun, after_fun)
+  end
+
+
+  def get_input_tokens() do
+    # get input lines as list of space-separated tokens
+    get_input() |> Stream.map(&String.split/1)
   end
 end
