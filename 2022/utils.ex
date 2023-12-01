@@ -1,7 +1,12 @@
 defmodule Utils do
+  def get_raw_input() do
+    # get input data line by line
+    get_input(System.argv)
+  end
+
   def get_input() do
     # get input data line by line and trim spaces/newlines
-    get_input(System.argv) |> Stream.map(&String.trim/1)
+    get_raw_input() |> Stream.map(&String.trim/1)
   end
 
   defp get_input([head | _]) do
